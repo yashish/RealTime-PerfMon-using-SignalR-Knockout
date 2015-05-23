@@ -2,20 +2,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml"; //null;
 }
 
+<div class="container">
 <h1>Demo sending messages using SignalR and Knockout</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <input type="text" placeholder="Message" data-bind="value:message"/>
+            <button class="btn btn-primary" data-bind="click:sendMessage">Send Message</button>
+        </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <input type="text" placeholder="Message" data-bind="value:message"/>
-        <button class="btn btn-primary" data-bind="click:sendMessage">Send Message</button>
-    </div>
-
-    <div class="col-md-4">
-        <div data-bind="foreach:messages">
-            <div data-bind="text:$data"></div>
+        <div class="col-md-4">
+            <div data-bind="foreach:messages">
+                <div data-bind="text:$data"></div>
+            </div>
         </div>
     </div>
-
 </div>
 
 @section scripts {
