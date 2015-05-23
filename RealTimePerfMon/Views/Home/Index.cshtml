@@ -3,7 +3,7 @@
 }
 
 <div class="container">
-<h1>Demo sending messages using SignalR and Knockout</h1>
+    <h1>Demos using SignalR and Knockout</h1>
     <div class="row">
         <div class="col-md-4">
             <input type="text" placeholder="Message" data-bind="value:message"/>
@@ -16,6 +16,13 @@
             </div>
         </div>
     </div>
+
+    <div class="row" data-bind="foreach:counters">
+        <div class="col-md-12">   
+            <h2 data-bind="text:name"></h2>
+            <canvas width="800" height="150" data-bind="attr: {'id': name}"></canvas>
+        </div>
+    </div>
 </div>
 
 @section scripts {
@@ -23,5 +30,6 @@
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/SignalR/hubs"></script>
     <script src="~/Scripts/knockout-2.2.0.js"></script>
+    <script src="~/Scripts/smoothies.js"></script>
     <script src="~/Scripts/perfMon.js"></script>
 }

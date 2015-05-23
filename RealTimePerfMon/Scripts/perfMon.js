@@ -12,10 +12,37 @@
         vm.addMessage(message);
     };
 
+    perfMonHub.client.newCounters = function (counters) {
+        vm.getCounters(counters);
+    }
+
+    var ChartEntry = function (counterName) {
+        var self = this;
+        self.name = counterName; //no need to make this observable as this will never change for each entry
+        self.chart = new SmoothieChart({ millisPerPixel: 50, labels: { fontSize: 15 } });
+        self.timeSeries = new TimeSeries();
+        self.chart.addTimeSeries(self.timeSeries, { lineWidth: 3, strokeStyle: "#00ff00" });
+    }
+    ChartEntry.prototype = {
+        addValue: function (value) {
+            var self = this;
+            self.timeSeries.append(new Date().getTime(), value); // Note that this is the client timestamp, not the server time (synchronizing with server time will not be simple)
+        },
+
+        //start drawing charts after data binding with knockout
+        start: function () {
+            var self = this;
+            self.canvas = document.getElementById(self.name);
+            self.chart.streamTo(self.canvas);
+        }
+    };
+
+
     var ViewModel = function () {
         var self = this;
         self.message = ko.observable(""),
-        self.messages = ko.observableArray()
+        self.messages = ko.observableArray(),
+        self.counters = ko.observableArray() //this will be a dictionary of counters to accomodate any number of counters pushed by the server
     };
 
     //create method on my view model to call the server Send method in the Hub.
@@ -30,6 +57,25 @@
         addMessage: function (message) {
             var self = this;
             self.messages.push(message);
+        },
+        getCounters: function (updatedCounters) {
+            var self = this;
+            
+            $.each(updatedCounters, function (index, updatedCounter) {
+                var entry = ko.utils.arrayFirst(self.counters(), function (counter) {
+                    return counter.name === updatedCounter.name;
+                });
+
+                if (!entry) {
+                    entry = new ChartEntry(updatedCounter.name);
+                    self.counters.push(entry);
+
+                    //call start method to draw the chart
+                    entry.start();
+                }
+                //add counter value
+                entry.addValue(updatedCounter.value);
+            })
         }
     }
 
